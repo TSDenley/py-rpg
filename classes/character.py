@@ -17,6 +17,11 @@ class Character:
     def take_damage(self, dmg):
         self.hp -= dmg
 
+    def heal(self, dmg):
+        self.hp += dmg
+        if self.hp > self.maxhp:
+            self.hp = self.maxhp
+
     def choose_action(self):
         i = 1
         for action in self.actions:

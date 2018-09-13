@@ -87,11 +87,22 @@ while True:
         player.reduce_mp(player_spell.cost)
 
         player_spell_dmg = player_spell.generate_damage()
-        enemy.take_damage(player_spell_dmg)
-        print('Your spell does ' + colored(str(player_spell_dmg), 'blue', attrs=['bold']) + ' points of damage!')
 
-        print(colored('Enemy HP: ', 'red', attrs=['bold']) + str(enemy.hp))
-        print(colored('Your MP: ', 'blue', attrs=['bold']) + str(player.mp))
+        if player_spell.type == 'black':
+            ### Damage the enemy
+            enemy.take_damage(player_spell_dmg)
+            print('Your spell does ' + colored(str(player_spell_dmg), 'blue', attrs=['bold']) + ' points of damage!')
+        elif player_spell.type == 'white':
+            # Heal the player
+            player.heal(player_spell_dmg)
+            print('Your spell heals you for ' + colored(str(player_spell_dmg), 'blue', attrs=['bold']) + ' HP!')
+        else:
+            print('Invalid spell type.')
+            continue
+
+        print(colored('Enemy HP: ', 'red', attrs=['bold']) + str(enemy.hp) + '/' + str(enemy.maxhp))
+        print(colored('Your HP: ', 'green', attrs=['bold']) + str(player.hp) + '/' + str(player.maxhp))
+        print(colored('Your MP: ', 'blue', attrs=['bold']) + str(player.mp) + '/' + str(player.maxmp))
     else:
         print(invalid_action)
         continue
