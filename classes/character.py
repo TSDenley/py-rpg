@@ -66,6 +66,13 @@ class Character:
         print('\n' + colored('Items', 'blue', attrs=['bold']))
         i = 1
         for item in self.items:
-            print(indt + str(i) + '.', item.name + ':', item.description, '(x5)')
+            if item['qty'] < 1:
+                continue
+            print(
+                 indt + str(i) + '.',
+                 item['item'].name + ':',
+                 item['item'].description,
+                 '(' + str(item['qty']) + ')'
+            )
             i += 1
         print(indt + '(back)')

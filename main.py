@@ -30,7 +30,12 @@ elixir = Item('Elixir', 'restore_hp_mp', 'Fully restores HP & MP', 0)
 grenade = Item('Grenade', 'damage', 'Damages all enemies', 300)
 
 ## Assign items
-player_items = [ potion, hipotion, ether, grenade ]
+player_items = [
+                    { 'item': potion, 'qty': 5 },
+                    { 'item': hipotion, 'qty': 2 },
+                    { 'item': ether, 'qty': 3 },
+                    { 'item': grenade, 'qty': 1 }
+               ]
 enemy_items = []
 
 # Instantiate characters
@@ -99,10 +104,8 @@ while True:
         player_spell_dmg = player_spell.generate_damage()
 
         if player_spell.type == 'black':
-            ### Damage the enemy
             enemy.take_damage(player_spell_dmg)
         elif player_spell.type == 'white':
-            ### Heal the player
             player.heal(player_spell_dmg)
         else:
             print('Invalid spell type.')
@@ -114,17 +117,20 @@ while True:
 
         ## Choose and item to use
         player.choose_item()
-        player_Item_choice = input('Choose item: ')
+        player_item_choice = input('Choose item: ')
 
-        if player_Item_choice == 'back':
+        if player_item_choice == 'back':
             continue
 
         try:
-            player_Item_choice = int(player_Item_choice) - 1
-            player_item = player.items[player_Item_choice]
+            player_item_choice = int(player_item_choice) - 1
+            player_item = player.items[player_item_choice]['item']
         except:
             print(invalid_action)
             continue
+
+        ### Reduce item quantity from player inventory
+        player.items[player_item_choice]['qty'] -= 1
 
         ### Resolve the item effect
         if player_item.type == 'restore_hp':
@@ -139,8 +145,6 @@ while True:
         else:
             print('Invalid item type')
             continue
-
-        ### Check quantity
 
     else:
         print(invalid_action)
