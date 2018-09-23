@@ -10,11 +10,11 @@ init()
 
 # Available magic
 ## Black magic (does damge)
-fire = Spell('Fire', 8, 100, 'black')
-thunder = Spell('Thunder', 8, 100, 'black')
-blizzard = Spell('Blizzard', 8, 100, 'black')
-quake = Spell('Quake', 12, 140, 'black')
-meteor = Spell('Meteor', 18, 200, 'black')
+fire = Spell('Fire', 10, 100, 'black')
+thunder = Spell('Thunder', 10, 100, 'black')
+blizzard = Spell('Blizzard', 10, 100, 'black')
+quake = Spell('Quake', 15, 140, 'black')
+meteor = Spell('Meteor', 22, 200, 'black')
 
 ## White magic (heals hp)
 cure = Spell('Cure', 12, 120, 'white')
