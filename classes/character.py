@@ -6,11 +6,12 @@ init()
 indt = '    '
 
 class Character:
-    def __init__(self, hp, mp, atk, df, magic, items):
-        self.maxhp = hp
+    def __init__(self, name, hp, mp, atk, df, magic, items):
+        self.name = name
         self.hp = hp
-        self.maxmp = mp
+        self.maxhp = hp
         self.mp = mp
+        self.maxmp = mp
         self.atk = atk
         self.df = df
         self.magic = magic
@@ -47,27 +48,34 @@ class Character:
             # Skip magic is character has no spells
             if action == 'Magic' and len(self.magic) < 1:
                 continue
+
             # Skip items if character has no items
             if action == 'Items' and len(self.items) < 1:
                 continue
+
             print(indt + str(i) + '.', action)
             i += 1
+
         print(indt + '(exit)')
 
     def choose_spell(self):
         print('\n' + colored('Magic', 'blue', attrs=['bold']))
+
         i = 1
         for spell in self.magic:
             print(indt + str(i) + '.', spell.name, '(cost:', str(spell.cost) + ')')
             i += 1
+
         print(indt + '(back)')
 
     def choose_item(self):
         print('\n' + colored('Items', 'blue', attrs=['bold']))
+
         i = 1
         for item in self.items:
             if item['qty'] < 1:
                 continue
+
             print(
                  indt + str(i) + '.',
                  item['item'].name + ':',
@@ -75,4 +83,5 @@ class Character:
                  '(' + str(item['qty']) + ')'
             )
             i += 1
+
         print(indt + '(back)')

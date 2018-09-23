@@ -1,9 +1,12 @@
+from classes.game import Game
 from classes.character import Character
 from classes.magic import Spell
 from classes.inventory import Item
+
 from colorama import init
 from termcolor import colored, cprint
 init()
+
 
 # Available magic
 ## Black magic (does damge)
@@ -39,25 +42,21 @@ player_items = [
 enemy_items = []
 
 # Instantiate characters
-player = Character(1200, 65, 60, 35, player_magic, player_items)
-enemy = Character(1200, 65, 60, 35, enemy_magic, enemy_items)
+player = Character('Player', 1200, 65, 60, 35, player_magic, player_items)
+enemy = Character('Enemy', 1200, 65, 60, 35, enemy_magic, enemy_items)
 
-turn = 1
-dev1 = '================================================================================'
-dev2 = '--------------------------------------------------------------------------------'
-invalid_action = 'Please choose an option from the menu'
+players = [ player ]
+enemies = [ enemy ]
+
+Game = Game(players, enemies)
 
 print('\n' + colored('AN ENEMY ATTACKS!', 'red', attrs=['bold']))
 
 # Start main game loop
 while True:
-    print('\n' + dev1)
-    print(colored('Turn ' + str(turn), attrs=['bold']) + '\n')
+    Game.display_character_stats()
 
-    # Player turn
-    cprint('Player turn', 'green', attrs=['bold'])
-    player.choose_action()
-    player_action = input('Choose action: ')
+    player_action = Game.choose_player_action(player)
 
     ## Type 'exit' to quit the game
     if player_action == 'exit':
@@ -68,7 +67,7 @@ while True:
     try:
         player_action = int(player_action) - 1
     except:
-        print(invalid_action)
+        print(Game.invalid_action)
         continue
 
     if player_action == 0:
@@ -79,39 +78,8 @@ while True:
 
     elif player_action == 1:
 
-        ## Choose a spell to cast
-        player.choose_spell()
-        player_magic_choice = input('Choose spell: ')
-
-        if player_magic_choice == 'back':
+        if not Game.resolve_spell(player):
             continue
-
-        try:
-            player_magic_choice = int(player_magic_choice) - 1
-            player_spell = player.magic[player_magic_choice]
-        except:
-            print(invalid_action)
-            continue
-
-        ### Check spell MP cost
-        if player_spell.cost > player.mp:
-            print('\n' + colored('Not enough MP to cast spell!', 'blue', attrs=['bold']))
-            continue
-
-        ### Cast the spell
-        print('\nYou cast ' + colored(player_spell.name, 'blue', attrs=['bold']) + '!')
-
-        player_spell_dmg = player_spell.generate_damage()
-
-        if player_spell.type == 'black':
-            enemy.take_damage(player_spell_dmg)
-        elif player_spell.type == 'white':
-            player.heal(player_spell_dmg)
-        else:
-            print('Invalid spell type.')
-            continue
-
-        player.reduce_mp(player_spell.cost)
 
     elif player_action == 2:
 
@@ -126,7 +94,7 @@ while True:
             player_item_choice = int(player_item_choice) - 1
             player_item = player.items[player_item_choice]['item']
         except:
-            print(invalid_action)
+            print(Game.invalid_action)
             continue
 
         ### Reduce item quantity from player inventory
@@ -147,7 +115,7 @@ while True:
             continue
 
     else:
-        print(invalid_action)
+        print(Game.invalid_action)
         continue
 
     ## Enemy is killed and the player wins
@@ -155,12 +123,7 @@ while True:
         print('\n' + colored('Enemy defeated!', 'red', attrs=['bold']))
         break
 
-    print(colored('Enemy HP: ', 'red', attrs=['bold']) + str(enemy.hp) + '/' + str(enemy.maxhp))
-    print(colored('Your HP: ', 'green', attrs=['bold']) + str(player.hp) + '/' + str(player.maxhp))
-    print(colored('Your MP: ', 'blue', attrs=['bold']) + str(player.mp) + '/' + str(player.maxmp))
-
     # Enemy turn
-    print('\n' + dev2 + '\n')
     cprint('Enemy turn', 'red', attrs=['bold'])
     ## Enemy just attacks for now
     enemy_action = 0
@@ -169,11 +132,10 @@ while True:
         ## Attack the player
         enemy_dmg = enemy.generate_damage()
         player.take_damage(enemy_dmg)
-        print(colored('Your HP: ', 'green', attrs=['bold']) + str(player.hp))
 
     ## Player has been killed and looses
     if player.hp < 1:
         print('\n' + colored('You have been defeated!', 'red', attrs=['bold']) + '\n')
         break
 
-    turn += 1
+    Game.next_turn()
