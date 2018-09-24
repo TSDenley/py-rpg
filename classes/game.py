@@ -45,11 +45,17 @@ class Game:
         player.choose_action()
         return input('Choose action: ')
 
+    def choose_enemy_action(self, enemy):
+        cprint('\nEnemy turn', 'red', attrs=['bold'])
+        return 0
+
     """
     Choose target player/enemy as target of spell or attack
     @return Character instance or False
     """
     def choose_target(self):
+        print('\n' + colored('Target:', attrs=['bold']))
+
         targets = self.players + self.enemies
 
         i = 1
@@ -66,7 +72,7 @@ class Game:
 
         try:
             target_choice = int(target_choice) - 1
-            spell = targets[target_choice]
+            target = targets[target_choice]
         except:
             print(invalid_action)
             return False
@@ -76,7 +82,7 @@ class Game:
     """
     Resolves a spell effect: damages or heals a target
     @calls self.choose_target()
-    @return void or False
+    @return True or False
     """
     def resolve_spell(self, caster):
         # Choose a spell to cast
@@ -98,12 +104,16 @@ class Game:
             print('\n' + colored('Not enough MP to cast spell!', 'blue', attrs=['bold']))
             return False
 
+        ## Designate a target
         target = self.choose_target()
         if not target:
             return False
 
         ## Cast the spell
-        print('\nYou cast ' + colored(spell.name, 'blue', attrs=['bold']) + '!')
+        print(
+              '\n' + caster.name, 'cast', colored(spell.name, 'blue', attrs=['bold']),
+              'on', colored(target.name, attrs=['bold']) + '!'
+        )
 
         spell_dmg = spell.generate_damage()
 
@@ -112,10 +122,54 @@ class Game:
         elif spell.type == 'white':
             target.heal(spell_dmg)
         else:
-            print('Invalid spell type.')
+            print('Invalid spell type')
             return False
 
         caster.reduce_mp(spell.cost)
+        return True
+
+    """
+    Resolves an item effect: damages or heals a target
+    @calls self.choose_target()
+    @return True or False
+    """
+    def resolve_item(self, user):
+        # Choose and item to use
+        user.choose_item()
+        item_choice = input('Choose item: ')
+
+        if item_choice == 'back':
+            return False
+
+        try:
+            item_choice = int(item_choice) - 1
+            item = user.items[item_choice]['item']
+        except:
+            print(invalid_action)
+            return False
+
+        ## Reduce item quantity from player inventory
+        user.items[item_choice]['qty'] -= 1
+
+        ## Designate a target
+        target = self.choose_target()
+        if not target:
+            return False
+
+        ## Resolve the item effect
+        if item.type == 'restore_hp':
+            target.heal(item.prop)
+        elif item.type == 'restore_mp':
+            target.heal_mp(item.prop)
+        elif item.type == 'restore_hp_mp':
+            target.heal(item.prop)
+            target.heal_mp(item.prop)
+        elif item.type == 'damage':
+            target.take_damage(item.prop)
+        else:
+            print('Invalid item type')
+            return False
+
         return True
 
     def next_turn(self):

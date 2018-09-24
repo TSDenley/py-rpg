@@ -42,6 +42,9 @@ class Character:
             self.mp = self.maxmp
         print('...recovered ' + colored(str(dmg), 'blue', attrs=['bold']) + ' MP!')
 
+    """
+    Print action choice menu
+    """
     def choose_action(self):
         i = 1
         for action in self.actions:
@@ -58,16 +61,26 @@ class Character:
 
         print(indt + '(exit)')
 
+    """
+    Print magic menu
+    """
     def choose_spell(self):
         print('\n' + colored('Magic', 'blue', attrs=['bold']))
 
         i = 1
         for spell in self.magic:
-            print(indt + str(i) + '.', spell.name, '(cost:', str(spell.cost) + ')')
+            print(
+                  indt + str(i) + '.',
+                  spell.name,
+                  '(cost:', str(spell.cost) + ')'
+            )
             i += 1
 
         print(indt + '(back)')
 
+    """
+    Print item choice menu
+    """
     def choose_item(self):
         print('\n' + colored('Items', 'blue', attrs=['bold']))
 

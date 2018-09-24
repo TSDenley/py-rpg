@@ -71,49 +71,16 @@ while True:
         continue
 
     if player_action == 0:
-
         ## Attack
-        player_dmg = player.generate_damage()
-        enemy.take_damage(player_dmg)
-
+        enemy.take_damage(player.generate_damage())
     elif player_action == 1:
-
+        ## Magic
         if not Game.resolve_spell(player):
             continue
-
     elif player_action == 2:
-
-        ## Choose and item to use
-        player.choose_item()
-        player_item_choice = input('Choose item: ')
-
-        if player_item_choice == 'back':
+        ## Item
+        if not Game.resolve_item(player):
             continue
-
-        try:
-            player_item_choice = int(player_item_choice) - 1
-            player_item = player.items[player_item_choice]['item']
-        except:
-            print(Game.invalid_action)
-            continue
-
-        ### Reduce item quantity from player inventory
-        player.items[player_item_choice]['qty'] -= 1
-
-        ### Resolve the item effect
-        if player_item.type == 'restore_hp':
-            player.heal(player_item.prop)
-        elif player_item.type == 'restore_mp':
-            player.heal_mp(player_item.prop)
-        elif player_item.type == 'restore_hp_mp':
-            player.heal(player_item.prop)
-            player.heal_mp(player_item.prop)
-        elif player_item.type == 'damage':
-            enemy.take_damage(player_item.prop)
-        else:
-            print('Invalid item type')
-            continue
-
     else:
         print(Game.invalid_action)
         continue
@@ -124,14 +91,11 @@ while True:
         break
 
     # Enemy turn
-    cprint('Enemy turn', 'red', attrs=['bold'])
-    ## Enemy just attacks for now
-    enemy_action = 0
+    enemy_action = Game.choose_enemy_action(enemy)
 
     if enemy_action == 0:
         ## Attack the player
-        enemy_dmg = enemy.generate_damage()
-        player.take_damage(enemy_dmg)
+        player.take_damage(enemy.generate_damage())
 
     ## Player has been killed and looses
     if player.hp < 1:
