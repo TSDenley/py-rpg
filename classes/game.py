@@ -13,6 +13,7 @@ class Game:
         self.turn = 1
         self.players = players
         self.enemies = enemies
+        self.characters = players + enemies
         self.invalid_action = invalid_action
 
     def display_character_stats(self):
@@ -41,12 +42,12 @@ class Game:
         print('\n')
 
     def choose_player_action(self, player):
-        cprint('Player turn', 'green', attrs=['bold'])
+        cprint(player.name + '\'s turn', 'green', attrs=['bold'])
         player.choose_action()
         return input('Choose action: ')
 
     def choose_enemy_action(self, enemy):
-        cprint('\nEnemy turn', 'red', attrs=['bold'])
+        cprint('\n' + enemy.name + '\'s turn', 'red', attrs=['bold'])
         return 0
 
     """
@@ -54,13 +55,11 @@ class Game:
     @return Character instance or False
     """
     def choose_target(self):
-        print('\n' + colored('Target:', attrs=['bold']))
-
-        targets = self.players + self.enemies
+        cprint('\nTarget:', attrs=['bold'])
 
         i = 1
-        for target in targets:
-            print(indt + str(i) + ':', target.name)
+        for character in self.characters:
+            print(indt + str(i) + ':', character.name)
             i += 1
 
         print(indt + '(back)')
@@ -72,12 +71,31 @@ class Game:
 
         try:
             target_choice = int(target_choice) - 1
-            target = targets[target_choice]
+            target = self.characters[target_choice]
         except:
             print(invalid_action)
             return False
 
         return target
+
+    """
+    Resolves a basic attack: damage a target
+    @calls self.choose_target()
+    @return True or False
+    """
+    def resolve_attack(self, attacker):
+        target = self.choose_target()
+
+        # print('TARGET:', target)
+
+        if not target:
+            return False
+
+        print('n' + attacker.name, 'attacks', colored(target.name, attrs=['bold']) + '!')
+
+        target.take_damage(attacker.generate_damage())
+
+        return True
 
     """
     Resolves a spell effect: damages or heals a target
@@ -101,7 +119,7 @@ class Game:
 
         ## Check spell MP cost
         if spell.cost > caster.mp:
-            print('\n' + colored('Not enough MP to cast spell!', 'blue', attrs=['bold']))
+            cprint('\nNot enough MP to cast spell!', 'blue', attrs=['bold'])
             return False
 
         ## Designate a target
@@ -111,7 +129,7 @@ class Game:
 
         ## Cast the spell
         print(
-              '\n' + caster.name, 'cast', colored(spell.name, 'blue', attrs=['bold']),
+              '\n' + caster.name, 'casts', colored(spell.name, 'blue', attrs=['bold']),
               'on', colored(target.name, attrs=['bold']) + '!'
         )
 
