@@ -99,8 +99,6 @@ class Game:
     def resolve_attack(self, attacker):
         target = self.choose_target()
 
-        # print('TARGET:', target)
-
         if not target:
             return False
 
