@@ -16,6 +16,10 @@ class Game:
         self.characters = players + enemies
         self.invalid_action = invalid_action
 
+    """
+    Print all character HP/MP at the begining of each turn
+    @return None
+    """
     def display_character_stats(self):
         print('\n' + DEV1)
         print(colored('Turn ' + str(self.turn), attrs=['bold']) + '\n')
@@ -41,11 +45,20 @@ class Game:
 
         print('\n')
 
+    """
+    Prompts player to choose action
+    @return int
+    """
     def choose_player_action(self, player):
         cprint(player.name + '\'s turn', 'green', attrs=['bold'])
         player.choose_action()
         return input('Choose action: ')
 
+    """
+    Set enemy action
+    For now, just reutns 0
+    @return int
+    """
     def choose_enemy_action(self, enemy):
         cprint('\n' + enemy.name + '\'s turn', 'red', attrs=['bold'])
         return 0
@@ -190,5 +203,9 @@ class Game:
 
         return True
 
+    """
+    Increment the turn counter
+    @return None
+    """
     def next_turn(self):
         self.turn += 1
