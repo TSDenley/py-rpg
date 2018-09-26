@@ -1,12 +1,8 @@
+import random
 from colorama import init
 from termcolor import colored, cprint
 init()
 
-
-DEV1 = '================================================================================'
-DEV2 = '--------------------------------------------------------------------------------'
-invalid_action = 'Please choose an option from the menu'
-indt = '    '
 
 class Game:
     def __init__(self, players, enemies):
@@ -14,14 +10,17 @@ class Game:
         self.players = players
         self.enemies = enemies
         self.characters = players + enemies
-        self.invalid_action = invalid_action
+        self.invalid_action = 'Please choose an option from the menu'
+        self.indt = '    '
+        self.DEV1 = '================================================================================'
+        self.DEV2 = '--------------------------------------------------------------------------------'
 
     """
     Print all character HP/MP at the begining of each turn
     @return None
     """
     def display_character_stats(self):
-        print('\n' + DEV1)
+        print('\n' + self.DEV1)
         print(colored('Turn ' + str(self.turn), attrs=['bold']) + '\n')
 
         cprint('Players:', 'green', attrs=['bold'])
@@ -33,7 +32,7 @@ class Game:
                   'MP:', str(player.mp) + '/' + str(player.maxmp)
             )
 
-        print(DEV2)
+        print(self.DEV2)
         cprint('Enemies:', 'red', attrs=['bold'])
 
         for enemy in self.enemies:
@@ -72,10 +71,10 @@ class Game:
 
         i = 1
         for character in self.characters:
-            print(indt + str(i) + ':', character.name)
+            print(self.indt + str(i) + ':', character.name)
             i += 1
 
-        print(indt + '(back)')
+        print(self.indt + '(back)')
 
         target_choice = input('Choose target: ')
 
@@ -92,18 +91,28 @@ class Game:
         return target
 
     """
+    Choose a random player to attack
+    @return player character instance
+    """
+    def choose_target_player(self):
+        target = random.randrange(0, len(self.players))
+
+        while self.players[target].hp < 1:
+            target = random.randrange(0, len(self.players))
+
+        return self.players[target]
+
+    """
     Resolves a basic attack: damage a target
     @calls self.choose_target()
     @return True or False
     """
     def resolve_attack(self, attacker):
         target = self.choose_target()
-
         if not target:
             return False
 
-        print('n' + attacker.name, 'attacks', colored(target.name, attrs=['bold']) + '!')
-
+        print('\n' + attacker.name, 'attacks', colored(target.name, attrs=['bold']) + '!')
         target.take_damage(attacker.generate_damage())
 
         return True

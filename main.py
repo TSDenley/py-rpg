@@ -39,7 +39,7 @@ player_items = [
     { 'item': ether, 'qty': 4 },
 ]
 player1_items = [
-    { 'item': hipotion, 'qty': 5 },
+    { 'item': hipotion, 'qty': 3 },
     { 'item': grenade, 'qty': 2 }
 ]
 enemy_items = []
@@ -47,7 +47,7 @@ enemy_items = []
 # Instantiate characters
 player1 = Character('Player 1', 750, 0, 100, 50, [], player1_items)
 player2 = Character('Player 2', 500, 65, 60, 35, player_magic, player_items)
-enemy = Character('Enemy', 1400, 65, 60, 35, enemy_magic, enemy_items)
+enemy = Character('Enemy 1', 1400, 65, 60, 35, enemy_magic, enemy_items)
 
 players = [ player1, player2 ]
 enemies = [ enemy ]
@@ -61,35 +61,36 @@ while True:
     Game.display_character_stats()
 
     for player in players:
-        player_action = Game.choose_player_action(player)
+        if player.hp > 0:
+            player_action = Game.choose_player_action(player)
 
-        ## Type 'exit' to quit the game
-        if player_action == 'exit':
-            cprint('\nBye!', 'green', attrs=['bold'])
-            sys.exit()
+            ## Type 'exit' to quit the game
+            if player_action == 'exit':
+                cprint('\nBye!', 'green', attrs=['bold'])
+                sys.exit()
 
-        ## Action choice must be a number
-        try:
-            player_action = int(player_action) - 1
-        except:
-            print(Game.invalid_action)
-            continue
+            ## Action choice must be a number
+            try:
+                player_action = int(player_action) - 1
+            except:
+                print(Game.invalid_action)
+                continue
 
-        if player_action == 0:
-            ## Attack
-            if not Game.resolve_attack(player):
+            if player_action == 0:
+                ## Attack
+                if not Game.resolve_attack(player):
+                    continue
+            elif player_action == 1:
+                ## Magic
+                if not Game.resolve_spell(player):
+                    continue
+            elif player_action == 2:
+                ## Item
+                if not Game.resolve_item(player):
+                    continue
+            else:
+                print(Game.invalid_action)
                 continue
-        elif player_action == 1:
-            ## Magic
-            if not Game.resolve_spell(player):
-                continue
-        elif player_action == 2:
-            ## Item
-            if not Game.resolve_item(player):
-                continue
-        else:
-            print(Game.invalid_action)
-            continue
 
         ## Enemy is killed and the player wins
         if enemy.hp < 1:
@@ -101,12 +102,9 @@ while True:
     enemy_action = Game.choose_enemy_action(enemy)
 
     if enemy_action == 0:
-        ## Attack the player
-        ### Attacks the players in order untill they're dead
-        for player in players:
-            if player.hp > 0:
-                player.take_damage(enemy.generate_damage())
-                break
+        target_player = Game.choose_target_player()
+        print('\n' + enemy.name, 'attacks', colored(target_player.name, attrs=['bold']) + '!')
+        target_player.take_damage(enemy.generate_damage())
 
     ## Player has been killed and looses
     if player.hp < 1:
