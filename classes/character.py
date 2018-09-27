@@ -25,6 +25,9 @@ class Character:
         self.hp -= dmg
         print('...' + colored(str(dmg), 'red', attrs=['bold']) + ' damage!')
 
+        if self.hp < 1:
+            cprint('\n' + self.name, 'is defeated!\n', attrs=['bold'])
+
     def reduce_mp(self, cost):
         self.mp -= cost
         if self.mp < 0:
