@@ -23,7 +23,6 @@ cura = Spell('Cura', 20, 200, 'white')
 
 ## Assign spells to characters
 player_magic = [ fire, thunder, blizzard, quake, meteor, cure, cura ]
-enemy_magic = []
 
 # Available Item
 potion = Item('Potion', 'restore_hp', 'Restores 50 HP', 50)
@@ -42,15 +41,17 @@ player1_items = [
     { 'item': hipotion, 'qty': 3 },
     { 'item': grenade, 'qty': 2 }
 ]
-enemy_items = []
 
 # Instantiate characters
+## name, hp, mp, atk, df, magic, items
 player1 = Character('Player 1', 750, 0, 100, 50, [], player1_items)
-player2 = Character('Player 2', 500, 65, 60, 35, player_magic, player_items)
-enemy = Character('Enemy 1', 1400, 65, 60, 35, enemy_magic, enemy_items)
+player2 = Character('Player 2', 500, 65, 45, 35, player_magic, player_items)
+enemy = Character('Enemy 1', 300, 30, 60, 35, [ fire ], [])
+enemy2 = Character('Enemy 2', 1400, 65, 80, 60, [], [])
+enemy3 = Character('Enemy 3', 300, 30, 60, 35, [ fire ], [])
 
 players = [ player1, player2 ]
-enemies = [ enemy ]
+enemies = [ enemy, enemy2, enemy3 ]
 
 Game = Game(players, enemies)
 
@@ -60,7 +61,12 @@ print('\n' + colored('AN ENEMY ATTACKS!', 'red', attrs=['bold']))
 while True:
     Game.display_character_stats()
 
-    for player in players:
+    # Player turn
+    p = 0
+    # for player in players:
+    while p < len(players):
+        player = players[p]
+
         if player.hp > 0:
             player_action = Game.choose_player_action(player)
 
@@ -91,24 +97,31 @@ while True:
             else:
                 print(Game.invalid_action)
                 continue
+        p += 1
 
+        # TODO: End game (all enemies are killed)
         ## Enemy is killed and the player wins
-        if enemy.hp < 1:
-            print('\n' + colored('Enemy defeated!', 'red', attrs=['bold']))
-            sys.exit()
+        # if enemy.hp < 1:
+        #     print('\n' + colored('Enemy defeated!', 'red', attrs=['bold']))
+        #     sys.exit()
 
     # Enemy turn
-    ## Enemy just attacks for now
-    enemy_action = Game.choose_enemy_action(enemy)
+    for enemy in enemies:
+        if enemy.hp > 0:
+            ## Enemy just attacks for now
+            enemy_action = Game.choose_enemy_action(enemy)
 
-    if enemy_action == 0:
-        target_player = Game.choose_target_player()
-        print('\n' + enemy.name, 'attacks', colored(target_player.name, attrs=['bold']) + '!')
-        target_player.take_damage(enemy.generate_damage())
+            if enemy_action == 0:
+                target_player = Game.choose_target_player()
+                print('\n' + enemy.name, 'attacks', colored(target_player.name, attrs=['bold']) + '!')
+                target_player.take_damage(enemy.generate_damage())
+            # elif enemy_action == 1:
+                # Magic
 
+    # TODO: End game (all players are killed)
     ## Player has been killed and looses
-    if player.hp < 1:
-        print('\n' + colored('You have been defeated!', 'red', attrs=['bold']) + '\n')
-        sys.exit()
+    # if player.hp < 1:
+    #     print('\n' + colored('You have been defeated!', 'red', attrs=['bold']) + '\n')
+    #     sys.exit()
 
     Game.next_turn()
