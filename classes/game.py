@@ -26,20 +26,40 @@ class Game:
         cprint('Players:', 'green', attrs=['bold'])
 
         for player in self.players:
+            if player.hp > 0:
+                player_hp = 'HP: ' + str(player.hp) + '/' + str(player.maxhp)
+            else:
+                player_hp = '(DEAD)'
+
+            if len(player.magic) > 0:
+                player_mp = 'MP: ' + str(player.mp) + '/' + str(player.maxmp)
+            else:
+                player_mp = ''
+
             print(
                   colored(player.name, attrs=['bold']),
-                  'HP:', str(player.hp) + '/' + str(player.maxhp),
-                  'MP:', str(player.mp) + '/' + str(player.maxmp)
+                  player_hp,
+                  player_mp
             )
 
         print(self.DEV2)
         cprint('Enemies:', 'red', attrs=['bold'])
 
         for enemy in self.enemies:
+            if enemy.hp > 0:
+                enemy_hp = 'HP: ' + str(enemy.hp) + '/' + str(enemy.maxhp)
+            else:
+                enemy_hp = '(DEAD)'
+
+            if len(enemy.magic) > 0:
+                enemy_mp = 'MP: ' + str(enemy.mp) + '/' + str(enemy.maxmp)
+            else:
+                enemy_mp = ''
+
             print(
                   colored(enemy.name, attrs=['bold']),
-                  'HP:', str(enemy.hp) + '/' + str(enemy.maxhp),
-                  'MP:', str(enemy.mp) + '/' + str(enemy.maxmp)
+                  enemy_hp,
+                  enemy_mp
             )
 
         print('\n')
