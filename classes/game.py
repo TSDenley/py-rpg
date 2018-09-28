@@ -1,3 +1,4 @@
+import sys
 import random
 from colorama import init
 from termcolor import colored, cprint
@@ -80,6 +81,11 @@ class Game:
     """
     def choose_enemy_action(self, enemy):
         cprint('\n' + enemy.name + '\'s turn', 'red', attrs=['bold'])
+
+        # if len(ememy.magic) > 0:
+        #
+
+        # attack
         return 0
 
     """
@@ -236,3 +242,30 @@ class Game:
     """
     def next_turn(self):
         self.turn += 1
+
+    """
+    End game
+    """
+    def enemies_defeated(self):
+        for enemy in self.enemies:
+            if enemy.hp > 0:
+                return
+
+        print(
+              '\n' + colored('All enemies are defeated!', 'red', attrs=['bold']),
+              'Your party is victorious!'
+        )
+
+        sys.exit()
+
+    def players_defeated(self):
+        for player in self.players:
+            if player.hp > 0:
+                return
+
+        print(
+              '\n' + colored('All players are defeated!', 'red', attrs=['bold']),
+              'Your enemies are victorious!'
+        )
+
+        sys.exit()

@@ -3,7 +3,6 @@ from colorama import init
 from termcolor import colored, cprint
 init()
 
-indt = '    '
 
 class Character:
     def __init__(self, name, hp, mp, atk, df, magic, items):
@@ -17,6 +16,7 @@ class Character:
         self.magic = magic
         self.items = items
         self.actions = [ 'Attack', 'Magic', 'Items' ]
+        self.indt = '    '
 
     def generate_damage(self):
         return random.randrange(self.atk - 10, self.atk + 10)
@@ -26,7 +26,7 @@ class Character:
         print('...' + colored(str(dmg), 'red', attrs=['bold']) + ' damage!')
 
         if self.hp < 1:
-            cprint('\n' + self.name, 'is defeated!\n', attrs=['bold'])
+            cprint('\n' + self.name + ' is defeated!\n', attrs=['bold'])
 
     def reduce_mp(self, cost):
         self.mp -= cost
@@ -59,10 +59,10 @@ class Character:
             if action == 'Items' and len(self.items) < 1:
                 continue
 
-            print(indt + str(i) + '.', action)
+            print(self.indt + str(i) + '.', action)
             i += 1
 
-        print(indt + '(exit)')
+        print(self.indt + '(exit)')
 
     """
     Print magic menu
@@ -73,13 +73,13 @@ class Character:
         i = 1
         for spell in self.magic:
             print(
-                  indt + str(i) + '.',
+                  self.indt + str(i) + '.',
                   spell.name,
                   '(cost:', str(spell.cost) + ')'
             )
             i += 1
 
-        print(indt + '(back)')
+        print(self.indt + '(back)')
 
     """
     Print item choice menu
@@ -93,11 +93,11 @@ class Character:
                 continue
 
             print(
-                 indt + str(i) + '.',
+                 self.indt + str(i) + '.',
                  item['item'].name + ':',
                  item['item'].description,
                  '(' + str(item['qty']) + ')'
             )
             i += 1
 
-        print(indt + '(back)')
+        print(self.indt + '(back)')

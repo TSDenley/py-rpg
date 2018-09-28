@@ -46,9 +46,9 @@ player1_items = [
 ## name, hp, mp, atk, df, magic, items
 player1 = Character('Player 1', 750, 0, 100, 50, [], player1_items)
 player2 = Character('Player 2', 500, 65, 45, 35, player_magic, player_items)
-enemy = Character('Enemy 1', 300, 30, 60, 35, [ fire ], [])
-enemy2 = Character('Enemy 2', 1400, 65, 80, 60, [], [])
-enemy3 = Character('Enemy 3', 300, 30, 60, 35, [ fire ], [])
+enemy = Character('Fire Imp', 300, 30, 60, 35, [ fire ], [])
+enemy2 = Character('Enemy 2', 1400, 65, 80, 60, [ meteor ], [])
+enemy3 = Character('Ice Imp', 300, 30, 60, 35, [ blizzard ], [])
 
 players = [ player1, player2 ]
 enemies = [ enemy, enemy2, enemy3 ]
@@ -63,7 +63,6 @@ while True:
 
     # Player turn
     p = 0
-    # for player in players:
     while p < len(players):
         player = players[p]
 
@@ -97,13 +96,11 @@ while True:
             else:
                 print(Game.invalid_action)
                 continue
-        p += 1
 
-        # TODO: End game (all enemies are killed)
-        ## Enemy is killed and the player wins
-        # if enemy.hp < 1:
-        #     print('\n' + colored('Enemy defeated!', 'red', attrs=['bold']))
-        #     sys.exit()
+        ## Have the enemies been killed?
+        Game.enemies_defeated()
+
+        p += 1
 
     # Enemy turn
     for enemy in enemies:
@@ -118,10 +115,7 @@ while True:
             # elif enemy_action == 1:
                 # Magic
 
-    # TODO: End game (all players are killed)
-    ## Player has been killed and looses
-    # if player.hp < 1:
-    #     print('\n' + colored('You have been defeated!', 'red', attrs=['bold']) + '\n')
-    #     sys.exit()
+            ## Has the player party been killed?
+            Game.players_defeated()
 
     Game.next_turn()
