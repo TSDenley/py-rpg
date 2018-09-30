@@ -67,6 +67,7 @@ class Game:
 
     """
     Prompts player to choose action
+    @param player - character instance
     @return int
     """
     def choose_player_action(self, player):
@@ -75,17 +76,31 @@ class Game:
         return input('Choose action: ')
 
     """
+    Filter magic list to spell that can be afforded
+    @param caster - character instance
+    @return list - affordable spells
+    """
+    def filter_magic(self, caster):
+        return list(filter(
+                           lambda s: s.cost <= caster.mp,
+                           caster.magic
+                          ))
+
+    """
     Set enemy action
-    For now, just reutns 0
+    @param enemy - character instance
     @return int
     """
     def choose_enemy_action(self, enemy):
         cprint('\n' + enemy.name + '\'s turn', 'red', attrs=['bold'])
 
-        # if len(ememy.magic) > 0:
-        #
+        ## Does the enemy have magic & MP?
+        if len(enemy.magic) > 0 and enemy.mp > 0:
+            if len(self.filter_magic(enemy)) > 0:
+                # TODO: Randomly choose magic or attact
+                return 1
 
-        # attack
+        # Default to attack
         return 0
 
     """
@@ -97,7 +112,10 @@ class Game:
 
         i = 1
         for character in self.characters:
-            print(self.indt + str(i) + ':', character.name)
+            if character.hp > 0:
+                print(self.indt + str(i) + ':', character.name)
+            else:
+                print(self.indt + str(i) + ':', character.name, '(DEAD)')
             i += 1
 
         print(self.indt + '(back)')
@@ -130,7 +148,6 @@ class Game:
 
     """
     Resolves a basic attack: damage a target
-    @calls self.choose_target()
     @return True or False
     """
     def resolve_attack(self, attacker):
@@ -144,8 +161,16 @@ class Game:
         return True
 
     """
+    Resolve an enemy basic attack on a player
+    @param attacker - character instance
+    """
+    def resolve_enemy_attack(self, attacker):
+        target_player = self.choose_target_player()
+        print('\n' + attacker.name, 'attacks', colored(target_player.name, attrs=['bold']) + '!')
+        target_player.take_damage(attacker.generate_damage())
+
+    """
     Resolves a spell effect: damages or heals a target
-    @calls self.choose_target()
     @return True or False
     """
     def resolve_spell(self, caster):
@@ -176,7 +201,7 @@ class Game:
         ## Cast the spell
         print(
               '\n' + caster.name, 'casts', colored(spell.name, 'blue', attrs=['bold']),
-              'on', colored(target.name, attrs=['bold']) + '!'
+                  'on', colored(target.name, attrs=['bold']) + '!'
         )
 
         spell_dmg = spell.generate_damage()
@@ -193,8 +218,36 @@ class Game:
         return True
 
     """
+    Resolves an enemy spell effect: damages or heals a target
+    """
+    def resolve_enemy_spell(self, caster):
+        target = self.choose_target_player()
+
+        # Choose spell
+        affordable_spells = self.filter_magic(caster)
+        spell = affordable_spells[
+            random.randrange(0, len(affordable_spells))
+        ]
+
+        # Cast the spell
+        print(
+              '\n' + colored(caster.name, 'red', attrs=['bold']), 'casts',
+              colored(spell.name, 'blue', attrs=['bold']),
+              'on', colored(target.name, attrs=['bold']) + '!'
+        )
+
+        spell_dmg = spell.generate_damage()
+
+        if spell.type == 'black':
+            target.take_damage(spell_dmg)
+        elif spell.type == 'white':
+            target.heal(spell_dmg)
+
+        caster.reduce_mp(spell.cost)
+
+    """
     Resolves an item effect: damages or heals a target
-    @calls self.choose_target()
+    @param user - character instance
     @return True or False
     """
     def resolve_item(self, user):
@@ -238,7 +291,6 @@ class Game:
 
     """
     Increment the turn counter
-    @return None
     """
     def next_turn(self):
         self.turn += 1

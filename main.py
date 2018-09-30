@@ -39,16 +39,17 @@ player_items = [
 ]
 player1_items = [
     { 'item': hipotion, 'qty': 3 },
-    { 'item': grenade, 'qty': 2 }
+    { 'item': grenade, 'qty': 2 },
 ]
 
 # Instantiate characters
 ## name, hp, mp, atk, df, magic, items
 player1 = Character('Player 1', 750, 0, 100, 50, [], player1_items)
 player2 = Character('Player 2', 500, 65, 45, 35, player_magic, player_items)
-enemy = Character('Fire Imp', 300, 30, 60, 35, [ fire ], [])
+
+enemy = Character('Fire Imp', 300, 20, 60, 35, [ fire ], [])
 enemy2 = Character('Enemy 2', 1400, 65, 80, 60, [ meteor ], [])
-enemy3 = Character('Ice Imp', 300, 30, 60, 35, [ blizzard ], [])
+enemy3 = Character('Ice Imp', 300, 20, 60, 35, [ blizzard ], [])
 
 players = [ player1, player2 ]
 enemies = [ enemy, enemy2, enemy3 ]
@@ -82,15 +83,12 @@ while True:
                 continue
 
             if player_action == 0:
-                ## Attack
                 if not Game.resolve_attack(player):
                     continue
             elif player_action == 1:
-                ## Magic
                 if not Game.resolve_spell(player):
                     continue
             elif player_action == 2:
-                ## Item
                 if not Game.resolve_item(player):
                     continue
             else:
@@ -105,17 +103,14 @@ while True:
     # Enemy turn
     for enemy in enemies:
         if enemy.hp > 0:
-            ## Enemy just attacks for now
             enemy_action = Game.choose_enemy_action(enemy)
 
             if enemy_action == 0:
-                target_player = Game.choose_target_player()
-                print('\n' + enemy.name, 'attacks', colored(target_player.name, attrs=['bold']) + '!')
-                target_player.take_damage(enemy.generate_damage())
-            # elif enemy_action == 1:
-                # Magic
+                Game.resolve_enemy_attack(enemy)
+            elif enemy_action == 1:
+                Game.resolve_enemy_spell(enemy)
 
-            ## Has the player party been killed?
-            Game.players_defeated()
+        ## Has the player party been killed?
+        Game.players_defeated()
 
     Game.next_turn()
