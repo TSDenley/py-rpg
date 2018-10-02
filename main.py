@@ -48,7 +48,7 @@ player1 = Character('Player 1', 750, 0, 100, 50, [], player1_items)
 player2 = Character('Player 2', 500, 65, 45, 35, player_magic, player_items)
 
 enemy = Character('Fire Imp', 300, 20, 60, 35, [ fire ], [])
-enemy2 = Character('Enemy 2', 1400, 65, 80, 60, [ meteor ], [])
+enemy2 = Character('Enemy 2', 1400, 45, 80, 60, [ quake ], [])
 enemy3 = Character('Ice Imp', 300, 20, 60, 35, [ blizzard ], [])
 
 players = [ player1, player2 ]

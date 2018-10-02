@@ -16,10 +16,7 @@ class Game:
         self.DEV1 = '================================================================================'
         self.DEV2 = '--------------------------------------------------------------------------------'
 
-    """
-    Print all character HP/MP at the begining of each turn
-    @return None
-    """
+    """Print all character HP/MP at the begining of each turn"""
     def display_character_stats(self):
         print('\n' + self.DEV1)
         print(colored('Turn ' + str(self.turn), attrs=['bold']) + '\n')
@@ -97,8 +94,8 @@ class Game:
         ## Does the enemy have magic & MP?
         if len(enemy.magic) > 0 and enemy.mp > 0:
             if len(self.filter_magic(enemy)) > 0:
-                # TODO: Randomly choose magic or attact
-                return 1
+                # Randomly choose magic or attact
+                return random.randrange(0, 2)
 
         # Default to attack
         return 0
