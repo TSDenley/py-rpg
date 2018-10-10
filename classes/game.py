@@ -1,5 +1,6 @@
 import sys
 import random
+from math import ceil
 from colorama import init
 from termcolor import colored, cprint
 init()
@@ -26,18 +27,21 @@ class Game:
         for player in self.players:
             if player.hp > 0:
                 player_hp = 'HP: ' + str(player.hp) + '/' + str(player.maxhp)
+                player_hp += self.render_stat_bar(player.hp, player.maxhp)
             else:
                 player_hp = '(DEAD)'
 
-            if len(player.magic) > 0:
+            if len(player.magic) > 0 and player.hp > 0:
                 player_mp = 'MP: ' + str(player.mp) + '/' + str(player.maxmp)
+                player_hp += self.render_stat_bar(player.mp, player.maxmp)
             else:
                 player_mp = ''
 
             print(
                   colored(player.name, attrs=['bold']),
                   player_hp,
-                  player_mp
+                  player_mp,
+                  '\n',
             )
 
         print(self.DEV2)
@@ -46,18 +50,21 @@ class Game:
         for enemy in self.enemies:
             if enemy.hp > 0:
                 enemy_hp = 'HP: ' + str(enemy.hp) + '/' + str(enemy.maxhp)
+                enemy_hp += self.render_stat_bar(enemy.hp, enemy.maxhp)
             else:
                 enemy_hp = '(DEAD)'
 
-            if len(enemy.magic) > 0:
+            if len(enemy.magic) > 0 and enemy.hp > 0:
                 enemy_mp = 'MP: ' + str(enemy.mp) + '/' + str(enemy.maxmp)
+                enemy_mp += self.render_stat_bar(enemy.mp, enemy.maxmp)
             else:
                 enemy_mp = ''
 
             print(
                   colored(enemy.name, attrs=['bold']),
                   enemy_hp,
-                  enemy_mp
+                  enemy_mp,
+                  '\n',
             )
 
         print('\n')
@@ -285,6 +292,31 @@ class Game:
             return False
 
         return True
+
+    """
+    Render a visual bar to show remaing HP/MP
+    @param value - int
+    @param max - int
+    """
+    def render_stat_bar(self, value, max):
+        BAR = '|'
+        BLOCK = '█'
+        remaining = ceil((value / max) * 100 / 10)
+        empty = 10 - remaining
+
+        if remaining == 10 and value < max:
+            remaining = 9
+            empty = 1
+
+        for i in range(remaining):
+            BAR += BLOCK
+
+        for i in range(empty):
+            BAR += ' '
+
+        BAR += '|'
+
+        return BAR
 
     """
     Increment the turn counter
