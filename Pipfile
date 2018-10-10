@@ -11,3 +11,6 @@ colorama = "*"
 
 [requires]
 python_version = "3.6"
+
+[scripts]
+start = "python3 main.py"
