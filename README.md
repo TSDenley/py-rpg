@@ -2,15 +2,14 @@
 
 An RPG battle system written in Python3.
 
-## Dependencies
+## Install Dependencies
 
 ```bash
-colorama
-termcolor
+$ pipenv install
 ```
 
 ## Run
 
 ```bash
-$ python3 main.py
+$ pipenv run start
 ```
